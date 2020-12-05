@@ -28,9 +28,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.google.gson.Gson;
 import com.turismo.TurismoApiApplication;
-import com.turismo.exceptions.TestExpectException;
 import com.turismo.models.City;
 import com.turismo.scripts.RandomString;
+import com.turismo.utils.TestExpectException;
 
 
 @SpringBootTest(classes = TurismoApiApplication.class)
@@ -78,7 +78,7 @@ class CityControllerTest {
 					.content(gson.toJson(city))
 					.characterEncoding("utf-8"))
 					.andExpect(status().isOk())
-					.andExpect(content().string("Created successfully"))
+					.andExpect(content().json("{\"msg\":\"Created successfully\"}"))
 					.andReturn();			
 			verifyCity(city, jdbcTemplate.queryForList(SELECT_WHERE + city.getId()), 0);			
 		} catch (Exception e) {
@@ -149,7 +149,7 @@ class CityControllerTest {
 			mockMvc.perform(delete("/City/delete/{id}", id)
 					.contentType(MediaType.APPLICATION_JSON))
 					.andExpect(status().isOk())
-					.andExpect(content().string("Deleted successfully"))
+					.andExpect(content().json("{\"msg\":\"Deleted successfully\"}"))
 					.andReturn();
 			List<Map<String, Object>> citiesDB = jdbcTemplate.queryForList(SELECT_WHERE + id);
 			Assert.assertEquals("City was not deleted successfully", 0, citiesDB.size());		
@@ -180,7 +180,7 @@ class CityControllerTest {
 					.content(gson.toJson(city))
 					.characterEncoding("utf-8"))
 					.andExpect(status().isOk())
-					.andExpect(content().string("Updated successfully"))
+					.andExpect(content().json("{\"msg\":\"Updated successfully\"}"))
 					.andReturn();			
 			verifyCity(city, jdbcTemplate.queryForList(SELECT_WHERE + id),0);
 		} catch (Exception e) {

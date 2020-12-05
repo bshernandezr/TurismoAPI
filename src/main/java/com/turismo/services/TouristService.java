@@ -51,7 +51,7 @@ public class TouristService implements ITouristService {
 	 */
 	public String deleteTourist(String id) {
 		if (readTouristById(id) != null) {
-			touristRepository.deleteById(id);
+			touristRepository.deleteById(id);			
 			return "Deleted successfully";
 		} else {
 			return "Cannot delete, entered id is not registered";

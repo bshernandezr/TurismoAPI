@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
 import com.turismo.models.City;
 import com.turismo.services.ICityService;
+import com.turismo.utils.ResponseMsg;
 
 /**
  * Rest controller for city entity
@@ -22,6 +25,7 @@ import com.turismo.services.ICityService;
  */
 @RestController
 @RequestMapping("/City")
+@EnableWebMvc
 public class CityREST {
 
 	@Autowired
@@ -36,11 +40,11 @@ public class CityREST {
 	 *         completed successfully, in other case return a message with the error
 	 */
 	@PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public String create(@RequestBody City city) {
+	public ResponseMsg creatCity(@RequestBody City city) {
 		if (cityService.readCityById(city.getId()) != null) {
-			return "This id City is already registered";
+			return new ResponseMsg("This id city is already registered");
 		} else {
-			return cityService.saveCity(city);
+			return new ResponseMsg(cityService.saveCity(city));
 		}
 	}
 
@@ -76,9 +80,9 @@ public class CityREST {
 	 * @return Response for the request, "Deleted successfully" if the operation was
 	 *         completed successfully, in other case return a message with the error
 	 */
-	@DeleteMapping("/delete/{id}")
-	public String delete(@PathVariable("id") Integer id) {
-		return cityService.deleteCity(id);
+	@DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseMsg delete(@PathVariable("id") Integer id) {
+		return new ResponseMsg(cityService.deleteCity(id));
 	}
 
 	/**
@@ -88,8 +92,8 @@ public class CityREST {
 	 * @return Response for the request, "Updated successfully" if the operation was
 	 *         completed successfully, in other case return a message with the error
 	 */
-	@PutMapping(value = "/edit", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public String edit(@RequestBody City city) {
-		return cityService.saveCity(city);
+	@PutMapping(value = "/edit", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseMsg edit(@RequestBody City city) {
+		return new ResponseMsg(cityService.saveCity(city));
 	}
 }

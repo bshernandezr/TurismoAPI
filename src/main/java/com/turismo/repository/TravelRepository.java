@@ -35,7 +35,7 @@ public interface TravelRepository extends JpaRepository<Travel, Integer> {
 	 *         contains all the travels for the name of the city joined, in other
 	 *         case returns null
 	 */
-	@Query("SELECT u FROM Travel u WHERE u.cityName = ?1")
+	@Query("SELECT u FROM Travel u WHERE u.cityName LIKE %?1%")
 	List<Travel> findByCity(String cityName);
 
 	/**

@@ -28,9 +28,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.google.gson.Gson;
 import com.turismo.TurismoApiApplication;
-import com.turismo.exceptions.TestExpectException;
 import com.turismo.models.Travel;
 import com.turismo.scripts.RandomString;
+import com.turismo.utils.TestExpectException;
 
 @SpringBootTest(classes = TurismoApiApplication.class)
 @WebAppConfiguration
@@ -80,7 +80,7 @@ class TravelControllerTest {
 					.content(gson.toJson(travel))
 					.characterEncoding("utf-8"))
 					.andExpect(status().isOk())
-					.andExpect(content().string("Created successfully"))
+					.andExpect(content().json("{\"msg\":\"Created successfully\"}"))
 					.andReturn();			
 			List<Map<String, Object>> travelDB = jdbcTemplate
 					.queryForList(SELECT_ALL);			
@@ -164,6 +164,7 @@ class TravelControllerTest {
 			mockMvc.perform(delete("/Travel/delete/{id}" , id)
 					.contentType(MediaType.APPLICATION_JSON))
 					.andExpect(status().isOk())
+					.andExpect(content().json("{\"msg\":\"Deleted successfully\"}"))
 					.andReturn();
 			List<Map<String, Object>> travelDB = jdbcTemplate.queryForList(SELECT_WHERE + id);
 			Assert.assertEquals("Travel was not deleted successfully", 0, travelDB.size());						
@@ -196,7 +197,7 @@ class TravelControllerTest {
 					.content(gson.toJson(travel))
 					.characterEncoding("utf-8"))					
 					.andExpect(status().isOk())
-					.andExpect(content().string("Updated successfully"))
+					.andExpect(content().json("{\"msg\":\"Updated successfully\"}"))
 					.andReturn();						
 			verifyTravel(travel, jdbcTemplate.queryForList(SELECT_WHERE + id), 0);						
 		} catch (Exception e) {
@@ -223,7 +224,7 @@ class TravelControllerTest {
 					.andReturn();
 			Travel[] travelsApi = gson.fromJson(result.getResponse().getContentAsString(), Travel[].class);
 			List<Map<String, Object>> travelsDB = jdbcTemplate
-					.queryForList("SELECT * FROM travel WHERE city_name = '" + cityName + "'");
+					.queryForList("SELECT * FROM travel WHERE city_name LIKE '%" + cityName + "%'");
 			Assert.assertEquals(READ_ERROR, travelsDB.size(), travelsApi.length);
 			for (int i = 0 ; i < travelsDB.size(); i++) {	
 				verifyTravel(travelsApi[i], travelsDB, i);	

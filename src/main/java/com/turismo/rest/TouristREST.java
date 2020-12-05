@@ -1,6 +1,8 @@
 package com.turismo.rest;
 
 import java.util.List;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,8 +13,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.turismo.models.Tourist;
 import com.turismo.services.ITouristService;
+import com.turismo.utils.ResponseMsg;
 
 /**
  * Rest controller for tourist entity
@@ -35,12 +39,12 @@ public class TouristREST {
 	 * @return Response for the request, "Created successfully" if the operation was
 	 *         completed successfully, in other case return a message with the error
 	 */
-	@PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public String create(@RequestBody Tourist tourist) {
+	@PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseMsg create(@RequestBody Tourist tourist) {
 		if (touristService.readTouristById(tourist.getId()) != null) {
-			return "This id tourist is already registered";
+			return new ResponseMsg("This id tourist is already registered");
 		} else {
-			return touristService.saveTourist(tourist);
+			return new ResponseMsg(touristService.saveTourist(tourist));
 		}
 	}
 
@@ -76,9 +80,9 @@ public class TouristREST {
 	 * @return Response for the request, "Deleted successfully" if the operation was
 	 *         completed successfully, in other case return a message with the error
 	 */
-	@DeleteMapping("/delete/{id}")
-	public String delete(@PathVariable("id") String id) {
-		return touristService.deleteTourist(id);
+	@DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseMsg delete(@PathVariable("id") String id) {
+		return new ResponseMsg(touristService.deleteTourist(id));
 	}
 
 	/**
@@ -88,8 +92,8 @@ public class TouristREST {
 	 * @return Response for the request, "Updated successfully" if the operation was
 	 *         completed successfully, in other case return a message with the error
 	 */
-	@PutMapping(value = "/edit", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public String edit(@RequestBody Tourist tourist) {
-		return touristService.saveTourist(tourist);
+	@PutMapping(value = "/edit", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseMsg edit(@RequestBody Tourist tourist) {
+		return new ResponseMsg(touristService.saveTourist(tourist));
 	}
 }

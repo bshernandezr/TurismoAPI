@@ -1,4 +1,4 @@
-package com.turismo.exceptions;
+package com.turismo.utils;
 
 /**
  * This exception occurs when the expected conditions in a test do not fulfilled

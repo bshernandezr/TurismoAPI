@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
 import com.turismo.models.Travel;
 import com.turismo.services.ITouristService;
 import com.turismo.services.ITravelService;
+import com.turismo.utils.ResponseMsg;
 
 /**
  * Rest controller for travel entity
@@ -23,6 +26,7 @@ import com.turismo.services.ITravelService;
  */
 @RestController
 @RequestMapping("Travel")
+@EnableWebMvc
 public class TravelREST {
 
 	@Autowired
@@ -38,15 +42,15 @@ public class TravelREST {
 	 * @return Response for the request, "Created successfully" if the operation was
 	 *         completed successfully, in other case return a message with the error
 	 */
-	@PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public String create(@RequestBody Travel travel) {
+	@PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces= MediaType.APPLICATION_JSON_VALUE)
+	public ResponseMsg create(@RequestBody Travel travel) {
 		if (touristService.readTouristById(travel.getIdTourist()) == null) {
-			return "Cannot save this register. This tourist id is not registered.";
+			return new ResponseMsg("Cannot save this register. This tourist id is not registered.");
 		}
 		if (travelService.verifyRegister(travel)) {
-			return "Cannot save this register. This travel is already registered. ";
+			return new ResponseMsg("Cannot save this register. This travel is already registered.");
 		}
-		return travelService.saveTravel(travel);
+		return  new ResponseMsg(travelService.saveTravel(travel));
 	}
 
 	/**
@@ -104,9 +108,9 @@ public class TravelREST {
 	 * @return Response for the request, "Deleted successfully" if the operation was
 	 *         completed successfully, in other case return a message with the error
 	 */
-	@DeleteMapping("/delete/{id}")
-	public String delete(@PathVariable("id") Integer id) {
-		return travelService.deleteTravel(id);
+	@DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseMsg delete(@PathVariable("id") Integer id) {
+		return new ResponseMsg(travelService.deleteTravel(id));
 	}
 
 	/**
@@ -116,15 +120,15 @@ public class TravelREST {
 	 * @return Response for the request, "Updated successfully" if the operation was
 	 *         completed successfully, in other case return a message with the error
 	 */
-	@PutMapping(value = "/edit/{id}" ,  consumes = MediaType.APPLICATION_JSON_VALUE)
-	public String edit( @RequestBody Travel travel , @PathVariable("id") Integer id ) {
+	@PutMapping(value = "/edit/{id}" ,  consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseMsg edit( @RequestBody Travel travel , @PathVariable("id") Integer id ) {
 		travel.setId(id);
 		if (travelService.verifyRegister(travel)) {
-			return "Cannot update this register. There are not any changes in the travel entered.";
+			return new ResponseMsg("Cannot update this register. There are not any changes in the travel entered.");
 		} else if (travelService.saveTravel(travel).equals("Created successfully")) {
-			return "Updated successfully";
+			return new ResponseMsg("Updated successfully");
 		} else {
-			return travelService.saveTravel(travel);
+			return new ResponseMsg(travelService.saveTravel(travel));
 		}
 	}
 }

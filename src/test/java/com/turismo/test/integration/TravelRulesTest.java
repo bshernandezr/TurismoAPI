@@ -25,8 +25,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.google.gson.Gson;
 import com.turismo.TurismoApiApplication;
-import com.turismo.exceptions.TestExpectException;
 import com.turismo.models.Travel;
+import com.turismo.utils.TestExpectException;
 
 @SpringBootTest(classes = TurismoApiApplication.class)
 @WebAppConfiguration
@@ -35,8 +35,8 @@ class TravelRulesTest {
 	private static final String CITY_TEST = "city1";
 	private static final String DATE_TEST = "01/01/21";
 	private static final String UTF8 = "utf-8";
-	private static final String GENDER_MSG = "Cannot save this register. Maximum number of male gender allowed for this city was reached.";
-	private static final String OCCUPATION_MSG = "Cannot save this register. Maximum ocuppation allowed for this city was reached.";
+	private static final String GENDER_MSG = "{\"msg\":\"Cannot save this register. Maximum number of male gender allowed for this city was reached.\"}";
+	private static final String OCCUPATION_MSG = "{\"msg\":\"Cannot save this register. Maximum ocuppation allowed for this city was reached.\"}";
 	
 	@Autowired
 	WebApplicationContext webApplicationContext;
@@ -172,7 +172,7 @@ class TravelRulesTest {
 					.content(gson.toJson(travel))
 					.characterEncoding(UTF8))
 					.andExpect(status().isOk())
-					.andExpect(content().string(expectedMsg))
+					.andExpect(content().json(expectedMsg))
 					.andReturn();
 			verifyRuleInOperations(travel);			
 		} catch (Exception e) {
